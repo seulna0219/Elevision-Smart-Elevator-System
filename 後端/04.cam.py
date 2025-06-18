@@ -1,13 +1,10 @@
 from ultralytics import YOLO
 import cv2
 
-# 載入已訓練的 YOLO 模型
 model = YOLO("C:/Users/raymo/PycharmProjects/yoloV8/models/best.pt")
 
-# 設定要偵測的目標物件（以你的模型標籤名稱為準）
-target_classes = ["EMT", "EMTLOGO"]  # ← 替換成你模型的實際類別名稱
+target_classes = ["EMT", "EMTLOGO"] 
 
-# 開啟攝影機
 cap = cv2.VideoCapture(0)
 
 if not cap.isOpened():
