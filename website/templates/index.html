@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電梯監控系統</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-building"></i>
+                    <h1>電梯監控系統</h1>
+                </div>
+                <p class="subtitle">智慧電梯安全監控與事件記錄平台</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="/monitoring" class="nav-item active">
+                        <i class="fas fa-video"></i>
+                        <span>監控畫面</span>
+                    </a>
+                    <a href="/events" class="nav-item">
+                        <i class="fas fa-list-alt"></i>
+                        <span>事件紀錄</span>
+                    </a>
+                </div>
+                <div class="nav-right">
+                    <div class="user-info">
+                        <i class="fas fa-user"></i>
+                        <span class="username">{{ session.username }}</span>
+                        <span class="user-role role-{{ session.role }}">
+                            {% if session.role == 'admin' %}管理員
+                            {% elif session.role == 'operator' %}操作員
+                            {% else %}觀察員{% endif %}
+                        </span>
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        登出
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="welcome-section">
+                <div class="welcome-container">
+                    <div class="welcome-content">
+                        <h2>歡迎使用電梯監控系統</h2>
+                        <p>本系統提供智慧化的電梯監控功能，能夠即時分析影片內容並記錄重要事件。</p>
+                        
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <h3>即時監控</h3>
+                                <p>提供即時影片處理和物件檢測功能</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-list-alt"></i>
+                                </div>
+                                <h3>事件記錄</h3>
+                                <p>自動記錄所有檢測到的物件和事件</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h3>緊急通報</h3>
+                                <p>檢測到異常狀況時自動發送緊急事件通報</p>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <a href="/monitoring" class="primary-btn">
+                                <i class="fas fa-play"></i>
+                                開始監控
+                            </a>
+                            <a href="/events" class="secondary-btn">
+                                <i class="fas fa-history"></i>
+                                查看紀錄
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // 高亮功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const currentPath = window.location.pathname;
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

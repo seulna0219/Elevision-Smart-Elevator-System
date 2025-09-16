@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>監控畫面 - 電梯監控系統</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-building"></i>
+                    <h1>電梯監控系統</h1>
+                </div>
+                <p class="subtitle">智慧電梯安全監控與事件記錄平台</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="/" class="nav-item">
+                        <i class="fas fa-home"></i>
+                        <span>首頁</span>
+                    </a>
+                    <a href="/monitoring" class="nav-item active">
+                        <i class="fas fa-video"></i>
+                        <span>監控畫面</span>
+                    </a>
+                    <a href="/events" class="nav-item">
+                        <i class="fas fa-list-alt"></i>
+                        <span>事件紀錄</span>
+                    </a>
+                </div>
+                <div class="nav-right">
+                    <div class="user-info">
+                        <i class="fas fa-user"></i>
+                        <span class="username">{{ user_info.name if user_info else 'Guest' }}</span>
+                        <span class="user-role role-{{ user_info.role if user_info else 'viewer' }}">
+                            {% if user_info %}
+                                {% if user_info.role == 'admin' %}管理員
+                                {% elif user_info.role == 'operator' %}操作員
+                                {% else %}觀察員{% endif %}
+                            {% else %}訪客{% endif %}
+                        </span>
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        登出
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Section -->
+            <section class="control-section">
+                <div class="control-container">
+                    {% if video_exists %}
+                    <!-- Floor Selection -->
+                    <div class="floor-selection">
+                        <label for="floor-select" class="floor-label">
+                            <i class="fas fa-building"></i>
+                            選擇監控樓層：
+                        </label>
+                        <select id="floor-select" class="floor-select">
+                            <option value="B3">B3樓 - 停車場</option>
+                            <option value="B2">B2樓 - 停車場</option>
+                            <option value="B1">B1樓 - 停車場</option>
+                            <option value="1F" selected>1樓 - 大廳</option>
+                            <option value="2F">2樓 - 辦公區</option>
+                            <option value="3F">3樓 - 辦公區</option>
+                            <option value="4F">4樓 - 辦公區</option>
+                            <option value="5F">5樓 - 辦公區</option>
+                            <option value="6F">6樓 - 辦公區</option>
+                            <option value="7F">7樓 - 辦公區</option>
+                            <option value="8F">8樓 - 辦公區</option>
+                            <option value="9F">9樓 - 辦公區</option>
+                            <option value="10F">10樓 - 辦公區</option>
+                            <option value="11F">11樓 - 會議室</option>
+                            <option value="12F">12樓 - 會議室</option>
+                            <option value="RF">頂樓 - 機房</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Detection Type Selection -->
+                    <div class="detection-type-selection">
+                        <label for="detection-type-select" class="detection-label">
+                            <i class="fas fa-eye"></i>
+                            偵測類型：
+                        </label>
+                        <select id="detection-type-select" class="detection-type-select">
+                            <option value="emt" selected>EMT 緊急醫療偵測</option>
+                            <option value="fall">暈倒偵測</option>
+                            <option value="capacity_full">滿員偵測 (全滿)</option>
+                            <option value="capacity_half">滿員偵測 (半滿)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="realtime-btn" id="realtime-btn">
+                            <i class="fas fa-broadcast-tower"></i>
+                            實時監控播放
+                        </button>
+                        <button class="stop-btn" id="stop-btn" style="display: none;">
+                            <i class="fas fa-stop"></i>
+                            停止實時監控
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>監控影片檔案不存在，請檢查系統設定。</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Realtime Section -->
+            <section class="realtime-section" id="realtimeSection" style="display: none;">
+                <div class="realtime-container">
+                    <div class="realtime-header">
+                        <h3><i class="fas fa-broadcast-tower"></i> 實時監控播放</h3>
+                        <div class="realtime-info">
+                            <span id="realtimeStatus">準備中...</span>
+                        </div>
+                    </div>
+                    <div class="video-display">
+                        <img id="realtime-video" src="" alt="實時監控畫面" style="max-width: 100%; height: auto; display: none;">
+                        <div class="loading-placeholder" id="realtimeLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>準備實時播放...</p>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center;">
+        <div class="loading-spinner" style="text-align: center; color: white;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px;"></i>
+            <p id="loading-text" style="font-size: 18px;">載入中...</p>
+        </div>
+    </div>
+
+        <script src="{{ url_for('static', filename='emergency_alert.js') }}"></script>
+        <script src="{{ url_for('static', filename='script_monitoring_simple.js') }}"></script>
+</body>
+</html>
